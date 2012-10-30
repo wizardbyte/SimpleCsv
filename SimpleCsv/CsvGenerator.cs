@@ -17,7 +17,7 @@ namespace SimpleCsv
         }
 
 
-        public string ObjectToCsvData(object obj)
+        public string ObjectToCsv(object obj)
         {
             if (obj == null)
             {
@@ -30,7 +30,7 @@ namespace SimpleCsv
 
             for (int i = 0; i < pinfo.Length; i++)
             {
-                sb.Append("\"");
+                sb.Append("\"");//enclose every value in quotes
                 sb.Append(pinfo[i].GetValue(obj, null));
                 sb.Append("\"");
                 if (i < pinfo.Length - 1)
@@ -41,14 +41,14 @@ namespace SimpleCsv
             return sb.ToString();
         }
 
-        public string ObjectToCsvString(IQueryable<object> queryable)
+        public string CollectionToCsv(IQueryable<object> queryable)
         {
             if(queryable == null)
                 return null;
             StringBuilder sb = new StringBuilder();
             foreach(object item in queryable)
             {
-                sb.AppendLine(this.ObjectToCsvData(item));
+                sb.AppendLine(this.ObjectToCsv(item));
             }
 
             return sb.ToString();
