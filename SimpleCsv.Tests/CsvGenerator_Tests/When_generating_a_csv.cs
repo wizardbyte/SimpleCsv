@@ -5,6 +5,7 @@ using Population;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using System.IO;
 
 namespace SimpleCsv.Tests
 {
@@ -15,6 +16,7 @@ namespace SimpleCsv.Tests
         protected CsvGenerator generator;
         protected IQueryable<Person> source;
         protected int personPropertyCount;
+        protected string fileSavePath = "testCsvFile.csv";
         
         [TestInitialize]
         public void Setup()
@@ -28,14 +30,28 @@ namespace SimpleCsv.Tests
         [TestCleanup]
         public void TearDown()
         {
+            if (File.Exists(fileSavePath))
+            {
+                File.Delete(fileSavePath);
+            }
+        }
+
+        [TestMethod]
+        public void file_should_not_be_empty()
+        {
+            generator.CollectionToCsvFile(source, fileSavePath);
+            string[] lines = File.ReadAllLines(fileSavePath);
+            Assert.AreNotEqual(0, lines.Count(), "File line count should not be 0.");
             
         }
 
         [TestMethod]
-        public void foo()
+        public void file_should_exist()
         {
             //Need to add a new method that will return a file or filestream or somethign for large data sets
             //in order to avoid out of memory errors.
+            generator.CollectionToCsvFile(source, fileSavePath);
+            Assert.IsTrue(File.Exists(fileSavePath));
         }
 
         [TestMethod]

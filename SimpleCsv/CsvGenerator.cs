@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.IO;
 
 namespace SimpleCsv
 {
@@ -52,6 +53,18 @@ namespace SimpleCsv
             }
 
             return sb.ToString();
+        }
+
+        public void CollectionToCsvFile(IQueryable<object> queryable, string fileSavePath)
+        {
+            FileStream fs = File.Create(fileSavePath);
+            StreamWriter sw = new StreamWriter(fs);
+            foreach (object item in queryable)
+            {
+                string rowString = this.ObjectToCsv(item);
+                sw.Write(rowString);
+            }
+            sw.Close();
         }
     }
 }
