@@ -32,8 +32,29 @@ namespace SimpleCsv.Tests
         {
             if (File.Exists(fileSavePath))
             {
-                File.Delete(fileSavePath);
+                //File.Delete(fileSavePath);
             }
+        }
+
+        [TestMethod]
+        public void file_should_have_column_headers()
+        {
+            generator.CollectionToCsvFile(source, fileSavePath, true);
+            string[] lines = File.ReadAllLines(fileSavePath);
+            object obj = source.First();
+            PropertyInfo[] pinfo = GetProperties(obj);
+            foreach (PropertyInfo header in pinfo)
+            {
+                Assert.IsTrue(lines[0].Contains(header.Name), "Header columns do not match expected.");
+            }
+        }
+
+        [TestMethod]
+        public void file_should_have_correct_number_of_lines()
+        {
+            generator.CollectionToCsvFile(source, fileSavePath);
+            string[] lines = File.ReadAllLines(fileSavePath);
+            Assert.AreEqual(source.Count(), lines.Count(), "Incorrect number of lines were output.");
         }
 
         [TestMethod]
@@ -157,12 +178,19 @@ namespace SimpleCsv.Tests
             Assert.IsNull(generator.CollectionToCsv(null));
         }
 
-        private int GetPropertiesCount(object obj)
+        private static int GetPropertiesCount(object obj)
         {
-            Type t = obj.GetType();
-            PropertyInfo[] pinfo = t.GetProperties();
+            PropertyInfo[] pinfo = GetProperties(obj);
             int expectedColumns = pinfo.Count();
             return expectedColumns;
         }
+
+        private static PropertyInfo[] GetProperties(object obj)
+        {
+            Type t = obj.GetType();
+            PropertyInfo[] pinfo = t.GetProperties();
+            return pinfo;
+        }
+
     }
 }
